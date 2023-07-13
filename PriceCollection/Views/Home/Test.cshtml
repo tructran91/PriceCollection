@@ -1,0 +1,14 @@
+﻿@using PriceCollection.Models;
+
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Test";
+}
+
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>@item.Name</li>
+    }
+</ul>

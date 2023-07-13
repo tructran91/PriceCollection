@@ -1,0 +1,51 @@
+﻿@using PriceCollection.ViewModels;
+
+@model List<ProductViewModel>
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    var isHeroProduct = Model[i].ProductType == ProductType.Hero ? true : false;
+    var price = "N/A";
+    if (!string.IsNullOrEmpty(Model[i].PriceManual))
+    {
+        price = @Model[i].PriceManual;
+    }
+    else if (@Model[i].Price == @Model[i].PriceMin && @Model[i].Price == @Model[i].PriceMax)
+    {
+        price = @Model[i].Price;
+    }
+    else
+    {
+        price = $"{@Model[i].PriceMin} - {@Model[i].PriceMax}";
+    }
+
+    <tr style="cursor: pointer" class="tr-product @(isHeroProduct ? "tr-hero-product" : "tr-nomal-product" )" data-type="@(isHeroProduct ? "hero" : "nomal")" data-id="@Model[i].ProductId" data-sku="@Model[i].SKU" data-name="@Model[i].Name" data-price="@price" data-sale="@Model[i].HistoricalSold" data-review="@Model[i].NumberOfComment">
+        <td>
+            <div class="form-check">
+                <input class="form-check-input selected-product" data-productid="@Model[i].ProductId" type="checkbox" />
+            </div>
+        </td>
+        <td>
+            <button class="btn btn-danger btn-sm btn-edit-product" title="Sửa sản phẩm"><i class="fas fa-pen"></i></button>
+        </td>
+        <td>
+            <div class="form-check">
+                @if(isHeroProduct)
+                {
+                    <input class="form-check-input" type="radio" disabled checked />
+                }
+                else
+                {
+                    <input class="form-check-input" type="radio" disabled />
+                }
+            </div>
+        </td>
+        <td>
+            @if (!string.IsNullOrEmpty(@Model[i].Image))
+            {
+                <img height="80px" src="@string.Format("https://down-vn.img.susercontent.com/file/{0}", @Model[i].Image)" />
+            }
+        </td>
+        <td>@Model[i].Name</td>
+    </tr>
+}

@@ -1,0 +1,549 @@
+﻿@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<div>
+    <!-- Heading -->
+    <h2 class="mb-4 mt-3 text-center">Danh sách sản phẩm</h2>
+
+    <!--Grid row-->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <!--Card-->
+            <div class="row">
+                <div class="col-md-12 mb-2 text-end">
+                    <button type="button" class="btn btn-danger" data-mdb-toggle="modal" data-mdb-target="#get-all-price-modal">
+                        Lấy giá sản phẩm
+                    </button>
+                    <button type="button" id="export-excel" class="btn btn-success">
+                        Xuất file Excel
+                    </button>
+                    <button type="button" id="add-product" class="btn btn-primary">
+                        Thêm sản phẩm
+                    </button>
+                </div>
+            </div>
+            <div class="toast align-items-center text-white bg-success border-0 w-100" id="get-all-price-toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Quá trình lấy giá toàn bộ sản phẩm đã hoàn tất
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="toast align-items-center text-white bg-success border-0 w-100" id="product-toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Thêm/Cập nhật sản phẩm thành công
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap table-striped table-sm align-middle" id="tbl-product">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 40px">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="chk-select-all" />
+                                    </div>
+                                </th>
+                                <th scope="col" style="width: 60px"></th>
+                                <th scope="col" style="width: 90px">
+                                    <select id="select-product-type">
+                                        <option value="0">Tất cả</option>
+                                        <option value="1">Thường</option>
+                                        <option value="2">Hero</option>
+                                    </select>
+                                </th>
+                                <th scope="col" style="width: 100px"> Hình ảnh</th>
+                                <th scope="col">Tên sản phẩm</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <!--/.Card-->
+        </div>
+
+        <div class="col-md-8 mb-4" style="display: none" id="competitor-zone">
+            <!--Card-->
+            <div class="row">
+                <div class="col-md-12 mb-2 text-end">
+                    <button type="button" id="add-competitor" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#competitor-modal">
+                        Thêm đối thủ
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="note note-primary mb-3">
+                        <ul class="mb-0">
+                            <li>Tên: <b id="lbl-product-name"></b></li>
+                            <li>SKU: <b id="lbl-sku"></b></li>
+                            <li>Giá bán: <b id="lbl-product-price"></b></li>
+                            <li>Số lượng đã bán: <b id="lbl-product-sale"></b></li>
+                            <li>Lượt đánh giá: <b id="lbl-product-review"></b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="toast align-items-center text-white bg-success border-0 w-100" id="competitor-toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Thêm đối thủ thành công
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="card p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap table-striped table-sm align-middle" id="tbl-competitor">
+                        <thead>
+                            <tr>
+                                <th>Tên đối thủ</th>
+                                <th style="width: 160px">Giá bán</th>
+                                <th style="width: 85px">Đã bán</th>
+                                <th style="width: 95px">Đánh giá</th>
+                                <th style="width: 100px">Hình ảnh</th>
+                                <th style="width: 100px">Link</th>
+                                <th style="width: 100px">Ghi chú</th>
+                                <th style="width: 150px"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <!--/.Card-->
+        </div>
+    </div>
+    <!--Grid row-->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="product-modal" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm Sản Phẩm</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-2">
+                    <p class="mb-0">Tên sản phẩm</p>
+                    <div class="form-outline">
+                        <input type="text" id="txt-product-name" class="form-control" autocomplete="off" placeholder="Nhập tên sản phẩm" />
+                    </div>
+                </div>
+                <div class="my-2">
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="hero-product" />
+                        <label class="form-check-label" for="hero-product">Đây là sản phẩm Hero</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-mdb-dismiss="modal" id="save-product"><i class="fas fa-floppy-disk me-2"></i>Lưu</button>
+                <button type="button" class="btn btn-warning" data-mdb-dismiss="modal" id="btn-cancel-save-product"><i class="fas fa-xmark me-2"></i>Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="competitor-modal" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm Đối Thủ</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-2">
+                    <p class="mb-0">Tên đối thủ</p>
+                    <div class="form-outline">
+                        <input type="text" class="form-control" id="competitor" placeholder="Nhập tên đối thủ" />
+                    </div>
+                </div>
+                <div class="my-2">
+                    <p class="mb-0">Link</p>
+                    <div class="form-outline">
+                        <input type="text" class="form-control" id="link" autocomplete="off" placeholder="Link để lấy giá" />
+                    </div>
+                </div>
+                <div class="my-2">
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="is-owner" />
+                        <label class="form-check-label" for="is-owner">Đây là sản phẩm của mình</label>
+                    </div>
+                </div>
+                <div class="my-2">
+                    <p class="mb-0">Ghi chú</p>
+                    <div class="form-outline">
+                        <textarea class="form-control" id="txt-note" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-mdb-dismiss="modal" id="save-competitor"><i class="fas fa-floppy-disk me-2"></i>Lưu</button>
+                <button type="button" class="btn btn-warning" data-mdb-dismiss="modal"><i class="fas fa-xmark me-2"></i>Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit-competitor-modal" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Sửa Đối Thủ</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-2">
+                    <p class="mb-0">Tên đối thủ</p>
+                    <div class="form-outline">
+                        <input type="text" class="form-control" id="txt-competitor-name-edited" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="my-2">
+                    <p class="mb-0">Link</p>
+                    <div class="form-outline">
+                        <input type="text" class="form-control" id="txt-link-edited" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="my-2">
+                    <p class="mb-0">Giá mới</p>
+                    <div class="form-outline">
+                        <input type="number" class="form-control" id="txt-price-edited" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="my-2">
+                    <p class="mb-0">Ghi chú</p>
+                    <div class="form-outline">
+                        <textarea class="form-control" id="txt-note-edited" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-mdb-dismiss="modal" id="btn-update-competitor"><i class="fas fa-floppy-disk me-2"></i>Lưu</button>
+                <button type="button" class="btn btn-warning" data-mdb-dismiss="modal" id="cancel-new-price"><i class="fas fa-xmark me-2"></i>Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete-competitor-modal" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xóa Đối Thủ</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-2">
+                    <h5>Bạn có chắc chắn muốn xóa đối thủ <span style="color: red" id="lbl-competitor-name-deleted"></span> không?</h5>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-mdb-dismiss="modal" id="btn-delete-competitor"><i class="fas fa-floppy-disk me-2"></i>Xóa</button>
+                <button type="button" class="btn btn-warning" data-mdb-dismiss="modal"><i class="fas fa-xmark me-2"></i>Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="get-all-price-modal" data-mdb-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận việc lấy giá toàn bộ sản phẩm</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-2">
+                    <h5>Việc lấy giá toàn bộ sản phẩm sẽ tốn nhiều thời gian. Trong lúc lấy giá, bạn <span style="color: red">KHÔNG NÊN</span> thực hiện thao tác gì cho đến khi kết thúc. Bạn chắc chắn muốn lấy giá toàn bộ không?</h5>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-mdb-dismiss="modal" id="btn-get-all-price"><i class="fas fa-floppy-disk me-2"></i>Lấy giá</button>
+                <button type="button" class="btn btn-warning" data-mdb-dismiss="modal"><i class="fas fa-xmark me-2"></i>Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="~/lib/sortable/sorttable.js"></script>
+    <script>
+        function loadProducts() {
+            $.get("Product/GetProducts", function (data) {
+                $("#tbl-product tbody").html(data);
+                resetProductType(Number.parseInt($('#select-product-type').val()))
+            });
+        }
+
+        function loadCompetitors(productId) {
+            $.get("Competitor/GetCompetitors?productId=" + productId + "", function (data) {
+                $("#tbl-competitor tbody").html(data);
+            });
+        }
+
+        function resetProductType(productType) {
+            if (productType == 1) {
+                $(".tr-hero-product").addClass("d-none");
+                $(".tr-nomal-product").removeClass("d-none");
+            }
+            else if (productType == 2) {
+                $(".tr-hero-product").removeClass("d-none");
+                $(".tr-nomal-product").addClass("d-none");
+            }
+            else {
+                $(".tr-hero-product").removeClass("d-none");
+                $(".tr-nomal-product").removeClass("d-none");
+            }
+        }
+
+        $(document).ready(function () {
+            var productIdSelected;
+            var competitorSelected;
+            var isAddProductMode = true;
+            var myProductToast = new bootstrap.Toast($('#product-toast'), {
+                delay: 1500
+            });
+            var myCompetitorToast = new bootstrap.Toast($('#competitor-toast'), {
+                delay: 1500
+            });
+            var priceToast = new bootstrap.Toast($('#get-all-price-toast'), {
+                delay: 5000000
+            });
+            var editPriceModal = new bootstrap.Modal($('#edit-competitor-modal'));
+            var productModal = new bootstrap.Modal($('#product-modal'));
+
+            loadProducts();
+
+            $('#tbl-product').on('click', '.tr-product', function () {
+                $("#lbl-product-name").text($(this).data("name"));
+                $("#lbl-sku").text($(this).data("sku"));
+                $("#lbl-product-price").text($(this).data("price"));
+                $("#lbl-product-sale").text($(this).data("sale"));
+                $("#lbl-product-review").text($(this).data("review"));
+
+                productIdSelected = $(this).data("id");
+                loadCompetitors(productIdSelected);
+                $("#competitor-zone").show();
+            });
+
+            $('#tbl-product').on('click', '.btn-edit-product', function () {
+                isAddProductMode = false;
+
+                var editedProduct = $(this).parent().parent();
+
+                $("#product-modal h5").text("Sửa sản phẩm");
+
+                $('#txt-product-name').val(editedProduct.data("name"));
+                if (editedProduct.data("type") == "hero") $('#hero-product').prop('checked', true);
+                else $('#hero-product').prop('checked', false);
+
+                productModal.show();
+            });
+
+            $("#add-product").click(function () {
+                isAddProductMode = true;
+
+                $("#product-modal h5").text("Thêm sản phẩm");
+
+                $('#txt-product-name').val("");
+                $('#hero-product').prop('checked', false);
+
+                productModal.show();
+            });
+
+            $("#save-product").click(function (e) {
+                var product = null;
+
+                if(isAddProductMode)
+                {
+                    product = {
+                        name: $('#txt-product-name').val(),
+                        isHeroType: $("#hero-product").prop('checked')
+                    }
+                }
+                else{
+                    product = {
+                        id: productIdSelected,
+                        name: $('#txt-product-name').val(),
+                        isHeroType: $("#hero-product").prop('checked')
+                    }
+                }
+
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    type: "POST",
+                    url: "/Product/AddEditProduct",
+                    data: JSON.stringify(product),
+                    success: function (response) {
+                        loadProducts();
+                        productModal.hide();
+                        myProductToast.show();
+                    }
+                });
+            });
+
+            $("#btn-cancel-save-product").click(function (e) {
+                productModal.hide();
+            });
+
+
+            $("#add-competitor").click(function () {
+                $('#competitor, #link, #txt-note').val("");
+                $('#is-owner').prop('checked', false);
+            });
+
+            $("#save-competitor").click(function (e) {
+                var competitor = {
+                    name: $('#competitor').val(),
+                    link: $('#link').val(),
+                    isOwner: $("#is-owner").prop('checked'),
+                    note: $('#txt-note').val(),
+                    productId: productIdSelected,
+                }
+
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    type: "POST",
+                    url: "/Competitor/AddCompetitor",
+                    data: JSON.stringify(competitor),
+                    success: function (response) {
+                        loadCompetitors(productIdSelected);
+                        myCompetitorToast.show()
+                    }
+                });
+            });
+
+            $('#tbl-competitor').on('click', '.btn-edit-competitor', function () {
+                competitorSelected = $(this).data("id");
+                var name = $(this).data("name");
+                var link = $(this).data("link");
+                var note = $(this).data("note");
+
+                $('#txt-competitor-name-edited').val(name);
+                $('#txt-link-edited').val(link);
+                $('#txt-price-edited').val("");
+                $('#txt-note-edited').val(note);
+
+                editPriceModal.show();
+            });
+
+            $('#tbl-competitor').on('click', '.btn-delete-competitor', function () {
+                competitorSelected = $(this).data("id");
+                var name = $(this).data("name");
+
+                $('#lbl-competitor-name-deleted').text(name);
+            });
+
+            $("#btn-update-competitor").click(function () {
+                var competitor = {
+                    id: competitorSelected,
+                    name: $('#txt-competitor-name-edited').val(),
+                    link: $('#txt-link-edited').val(),
+                    newPrice: $('#txt-price-edited').val(),
+                    note: $('#txt-note-edited').val(),
+                }
+
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    type: "POST",
+                    url: "/Competitor/EditCompetitor",
+                    data: JSON.stringify(competitor),
+                    success: function (response) {
+                        editPriceModal.hide();
+                        loadCompetitors(productIdSelected);
+                    }
+                });
+            });
+
+            $("#btn-delete-competitor").click(function () {
+                $.get("Competitor/DeleteCompetitor?competitorId=" + competitorSelected + "", function (data) {
+                    loadCompetitors(productIdSelected)
+                });
+            });
+
+            $("#cancel-new-price").click(function () {
+                editPriceModal.hide();
+            });
+
+            $('#tbl-competitor').on('click', '.get-price', function () {
+                competitorSelected = $(this).data("id");
+                $.get("Competitor/GetPrice?competitorId=" + competitorSelected + "", function (data) {
+                    loadCompetitors(productIdSelected);
+                });
+            });
+
+            $("#tbl-competitor").addSortWidget();
+
+            $("#chk-select-all").change(function () {
+                $('.tr-product').each(function (i, obj) {
+                    if ($(this).hasClass("d-none")) {
+                        $(this).find(".selected-product").prop('checked', false)
+                    }
+                    else {
+                        //$('input:checkbox').not(this).prop('checked', this.checked);
+                        $(this).find(".selected-product").prop('checked', $("#chk-select-all").prop('checked'));
+                    }
+                });
+            });
+
+            $("#export-excel").click(function () {
+                var selectedProducts = $(".selected-product:checkbox:checked").map(function () {
+                    return $(this).data('productid')
+                }).get();
+
+                var productIds = {
+                    productIds: selectedProducts
+                };
+
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    type: "POST",
+                    cache: false,
+                    url: "/Product/ExportExcel",
+                    data: JSON.stringify(productIds),
+                    success: function (data) {
+                        if (data != null) {
+                            var link = '/Product/Download' + data;
+                            window.location = link;
+                        }
+                    }
+                });
+            });
+
+            $("#btn-get-all-price").click(function () {
+                $.get("Competitor/GetAllPrice", function (data) {
+                    priceToast.show();
+                    loadProducts();
+                });
+            });
+
+            $('#select-product-type').on('change', function () {
+                resetProductType(this.value);
+            });
+        });
+    </script>
+}

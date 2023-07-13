@@ -1,0 +1,44 @@
+﻿@using PriceCollection.ViewModels;
+
+@model List<CompetitorViewModel>
+
+
+@foreach (var item in Model)
+{
+    var className = item.IsOwner ? "table-success" : "";
+
+    <tr class="@className">
+        <td>@item.Name</td>
+        @if (!string.IsNullOrEmpty(item.PriceManual))
+        {
+            <td>@item.PriceManual</td>
+        }
+        else if (item.Price == item.PriceMin && item.Price == item.PriceMax)
+        {
+            <td>@item.Price</td>
+        }
+        else
+        {
+            <td>@item.PriceMin - @item.PriceMax</td>
+        }
+        <td>@item.HistoricalSold</td>
+        <td>@item.NumberOfComment</td>
+        <td>
+            @if (!string.IsNullOrEmpty(item.Image))
+            {
+                <img height="80px" src="@string.Format("https://down-vn.img.susercontent.com/file/{0}", item.Image)" />
+            }
+        </td>
+        <td>
+            <a href="@item.Link" target="_blank">Link Shopee</a>
+        </td>
+        <td>
+            <textarea disabled>@item.Note</textarea>
+        </td>
+        <td>
+            <button class="btn btn-primary btn-sm btn-edit-competitor" title="Sửa đối thủ" data-id="@item.CompetitorId" data-name="@item.Name" data-link="@item.Link" data-note="@item.Note"><i class="fas fa-pen"></i></button>
+            <button class="btn btn-danger btn-sm btn-delete-competitor" title="Xóa đối thủ" data-mdb-toggle="modal" data-mdb-target="#delete-competitor-modal" data-id="@item.CompetitorId" data-name="@item.Name"><i class="fas fa-trash-can"></i></button>
+            <button class="btn btn-warning btn-sm get-price" title="Lấy giá từ Shopee" data-id="@item.CompetitorId"><i class="fas fa-dollar-sign"></i></button>
+        </td>
+    </tr>
+}
